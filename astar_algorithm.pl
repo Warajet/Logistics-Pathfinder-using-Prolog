@@ -30,9 +30,9 @@ location(malaysia, lahaddatu, 5.033333333, 118.3333333).
 location(malaysia, lumut, 4.266666667, 100.65).
 location(malaysia, miri, 4.433333333,  113.9166667).
 location(malaysia, pasirgudang, 1.433333333, 103.90000000).
-location(malaysia, penang(georgetown), 5.416666667, 100.35).
-location(malaysia,portdickson, 2.516666667, 101.7833333).
-location(malaysia, portklang(kelang), 3.00000000, 101.40000000).
+location(malaysia, penang, 5.416666667, 100.35).
+location(malaysia, portdickson, 2.516666667, 101.7833333).
+location(malaysia, portklang, 3.00000000, 101.40000000).
 location(malaysia, sandakan, 5.833333333, 118.1166667).
 location(malaysia, sibu, 2.30000000, 111.8166667).
 location(malaysia, tanjungpelepas, 1.35, 103.5333333).
@@ -144,17 +144,24 @@ neighbour_distance(zamboanga,davao,244.874959503608).
 % ways
 distance(X,Y,Z) :- neighbour_distance(X,Y,Z).
 distance(X,Y,Z) :- neighbour_distance(Y,X,Z).
+
 % A star algorithm consist of 2 sections f(n)= actual cost from
 % source-> dest and h(n) = heuristic function
 
 % A Star search Algorithm requires 2 function -> 1) get h(n)
 % and 2) keep searching the nodes in undirected graph where
 % h(n) = Estimated cost of the cheapest path from n to goal from source
+
 aStarSearchAlgorithm(Source, Destination, Path, Cost):- getHeuristicValue(Source, Destination, HeuristicVal),
     search(Destination, [[Source,[Source], HeuristicVal]], [_, Path, Cost]).
 
+<<<<<<< Updated upstream
 search(Source_Port, [[Source_Port, Path, TotalCost] | T], [Source_Port, Path, TotalCost]) :- !.
 search(Destination, [[Source_Port, Path, TotalCost] | T], Result) :- expand([Source_Port, Path, TotalCost], Destination, ExpandedNode),
+=======
+search(Start_Port, [[Start_Port, Path, TotalCost] | T], [Start_Port, Path, TotalCost]) :- !.
+search(Destination, [[Start_Port, Path, TotalCost] | T], Result) :- expand([Start_Port, Path, TotalCost], Destination, ExpandedNode),
+>>>>>>> Stashed changes
     append(T, ExpandedNode, NewQueue),
     minsort(NewQueue, PriorityQueue),
     %write("\n\nQueue: "),
@@ -163,6 +170,7 @@ search(Destination, [[Source_Port, Path, TotalCost] | T], Result) :- expand([Sou
     %write(PriorityQueue), write("\n"),
     search(Destination, PriorityQueue, Result).
 
+<<<<<<< Updated upstream
 expand([Port,Path,_], Destination, Return) :- findall(X, distance(Port,X,_),NextPorts),
 						 checkPassedNode(NextPorts, Path, [], NewNextPorts),
 						 createNode(NewNextPorts, Destination, Path, [], Return).
@@ -175,6 +183,20 @@ checkPassedNode([Port|T], Path, NewPorts, Return) :-
     checkPassedNode(T, Path, NNewPort, Return).
 
 in(Port, [PassedPort|Path]) :- Port == PassedPort -> !;in(Port,Path).
+=======
+expand([Port,Path,_], Destination, Return) :- findall(X, distance(Port,X,_),Next_Node),
+						 checkPassedPort(Next_Node, Path, [], NewNext_Node),
+						 createNode(NewNext_Node, Destination, Path, [], Return).
+
+
+checkPassedPort([],Path,UnvisitedPorts, UnvisitedPorts).
+checkPassedPort([Port|T], Path, UnvisitedPorts, Return) :-
+    in(Port, Path) -> checkPassedPort(T, Path, UnvisitedPorts, Return);
+    append(UnvisitedPorts,[Port],NewPort),
+    checkPassedPort(T, Path, NewPort, Return).
+
+in(Port, [VisitedPort|Path]) :- Port == VisitedPort -> !;in(Port,Path).
+>>>>>>> Stashed changes
 
 createNode([], Destination, Path, Nodes, Nodes).
 createNode([Port|T], Destination,Path,Nodes, ExpandedNodes) :- append(Path, [Port], NewPath),
