@@ -155,13 +155,9 @@ distance(X,Y,Z) :- neighbour_distance(Y,X,Z).
 aStarSearchAlgorithm(Source, Destination, Path, Cost):- getHeuristicValue(Source, Destination, HeuristicVal),
     search(Destination, [[Source,[Source], HeuristicVal]], [_, Path, Cost]).
 
-<<<<<<< Updated upstream
 search(Source_Port, [[Source_Port, Path, TotalCost] | T], [Source_Port, Path, TotalCost]) :- !.
 search(Destination, [[Source_Port, Path, TotalCost] | T], Result) :- expand([Source_Port, Path, TotalCost], Destination, ExpandedNode),
-=======
-search(Start_Port, [[Start_Port, Path, TotalCost] | T], [Start_Port, Path, TotalCost]) :- !.
-search(Destination, [[Start_Port, Path, TotalCost] | T], Result) :- expand([Start_Port, Path, TotalCost], Destination, ExpandedNode),
->>>>>>> Stashed changes
+
     append(T, ExpandedNode, NewQueue),
     minsort(NewQueue, PriorityQueue),
     %write("\n\nQueue: "),
@@ -170,7 +166,6 @@ search(Destination, [[Start_Port, Path, TotalCost] | T], Result) :- expand([Star
     %write(PriorityQueue), write("\n"),
     search(Destination, PriorityQueue, Result).
 
-<<<<<<< Updated upstream
 expand([Port,Path,_], Destination, Return) :- findall(X, distance(Port,X,_),NextPorts),
 						 checkPassedNode(NextPorts, Path, [], NewNextPorts),
 						 createNode(NewNextPorts, Destination, Path, [], Return).
@@ -183,20 +178,6 @@ checkPassedNode([Port|T], Path, NewPorts, Return) :-
     checkPassedNode(T, Path, NNewPort, Return).
 
 in(Port, [PassedPort|Path]) :- Port == PassedPort -> !;in(Port,Path).
-=======
-expand([Port,Path,_], Destination, Return) :- findall(X, distance(Port,X,_),Next_Node),
-						 checkPassedPort(Next_Node, Path, [], NewNext_Node),
-						 createNode(NewNext_Node, Destination, Path, [], Return).
-
-
-checkPassedPort([],Path,UnvisitedPorts, UnvisitedPorts).
-checkPassedPort([Port|T], Path, UnvisitedPorts, Return) :-
-    in(Port, Path) -> checkPassedPort(T, Path, UnvisitedPorts, Return);
-    append(UnvisitedPorts,[Port],NewPort),
-    checkPassedPort(T, Path, NewPort, Return).
-
-in(Port, [VisitedPort|Path]) :- Port == VisitedPort -> !;in(Port,Path).
->>>>>>> Stashed changes
 
 createNode([], Destination, Path, Nodes, Nodes).
 createNode([Port|T], Destination,Path,Nodes, ExpandedNodes) :- append(Path, [Port], NewPath),
