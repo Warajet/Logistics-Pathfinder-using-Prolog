@@ -1,4 +1,4 @@
-%Station List
+% Port List
 portList(['kualabelait', 'muara', 'kompongsom', 'phnompenh', 'cilacap', 'cirebon', 'jakarta', 'kupang', 'palembang', 'semarang', 'surabaya', 'ujungpandang,', 'bintulu', 'kotakinabalu', 'kuantan', 'kuching', 'kudat', 'labuan', 'lahaddatu', 'lumut', 'miri', 'pasirgudang', 'penang', 'portdickson', 'portklang', 'sandakan', 'sibu', 'tanjungpelepas', 'tawau', 'bassein', 'moulmein', 'yangon', 'batangas', 'cagayandeoro,', 'cebu', 'davao', 'iligano', 'iloilo', 'jolo', 'legaspi', 'manila', 'puertoprincesa,', 'sanfernando', 'subicbay', 'zamboanga', 'singapore', 'bangkok', 'laemchabang', 'pattani', 'phuket', 'sattahip', 'songkhla', 'sriracha', 'danang', 'haiphong', 'hochiminhcity', 'hongay', 'nhatrang']).
 
 % ports - brunei darussalam
@@ -9,7 +9,7 @@ location(brunei_darussalam, muara,  5.016666667, 115.0666667).
 location(cambodia, kompongsom, 10.63333333, 103.50000000).
 location(cambodia, phnompenh, 11.58333333, 104.9166667).
 
-%ports - indonesia
+% ports - indonesia
 location(indonesia, cilacap, 8.733333333, 109.00000000).
 location(indonesia, cirebon, 6.683333333, 108.55000000).
 location(indonesia, jakarta, 6.10000000, 106.86666666).
@@ -38,7 +38,7 @@ location(malaysia, sibu, 2.30000000, 111.8166667).
 location(malaysia, tanjungpelepas, 1.35, 103.5333333).
 location(malaysia, tawau,  4.233333333, 117.8666667).
 
-%ports - myanmar
+% ports - myanmar
 location(myanmar, bassein, 16.75, 94.71666667).
 location(myanmar, moulmein, 16.48333333, 97.61666667).
 location(myanmar, yangon, 16.78333333, 96.25).
@@ -153,8 +153,8 @@ distance(X,Y,Z) :- neighbour_distance(Y,X,Z).
 aStarSearchAlgorithm(Source, Destination, Path, Cost):- getHeuristicValue(Source, Destination, HeuristicVal),
     search(Destination, [[Source,[Source], HeuristicVal]], [_, Path, Cost]).
 
-search(Source_Station, [[Source_Station, Path, TotalCost] | T], [Source_Station, Path, TotalCost]) :- !.
-search(Destination, [[Source_Station, Path, TotalCost] | T], Result) :- expand([Source_Station, Path, TotalCost], Destination, ExpandedNode),
+search(Source_Port, [[Source_Port, Path, TotalCost] | T], [Source_Port, Path, TotalCost]) :- !.
+search(Destination, [[Source_Port, Path, TotalCost] | T], Result) :- expand([Source_Port, Path, TotalCost], Destination, ExpandedNode),
     append(T, ExpandedNode, NewQueue),
     minsort(NewQueue, PriorityQueue),
     %write("\n\nQueue: "),
@@ -163,22 +163,22 @@ search(Destination, [[Source_Station, Path, TotalCost] | T], Result) :- expand([
     %write(PriorityQueue), write("\n"),
     search(Destination, PriorityQueue, Result).
 
-expand([Station,Path,_], Destination, Return) :- findall(X, distance(Station,X,_),NextStations),
-						 checkPassedNode(NextStations, Path, [], NewNextStations),
-						 createNode(NewNextStations, Destination, Path, [], Return).
+expand([Port,Path,_], Destination, Return) :- findall(X, distance(Port,X,_),NextPorts),
+						 checkPassedNode(NextPorts, Path, [], NewNextPorts),
+						 createNode(NewNextPorts, Destination, Path, [], Return).
 
 
-checkPassedNode([],Path,NewStations, NewStations).
-checkPassedNode([Station|T], Path, NewStations, Return) :-
-    in(Station, Path) -> checkPassedNode(T, Path, NewStations, Return);
-    append(NewStations,[Station],NNewStation),
-    checkPassedNode(T, Path, NNewStation, Return).
+checkPassedNode([],Path,NewPorts, NewPorts).
+checkPassedNode([Port|T], Path, NewPorts, Return) :-
+    in(Port, Path) -> checkPassedNode(T, Path, NewPorts, Return);
+    append(NewPorts,[Port],NNewPort),
+    checkPassedNode(T, Path, NNewPort, Return).
 
-in(Station, [PassedStation|Path]) :- Station == PassedStation -> !;in(Station,Path).
+in(Port, [PassedPort|Path]) :- Port == PassedPort -> !;in(Port,Path).
 
 createNode([], Destination, Path, Nodes, Nodes).
-createNode([Station|T], Destination,Path,Nodes, ExpandedNodes) :- append(Path, [Station], NewPath),
-	append(Nodes, [[Station, NewPath, 0]], NewNodes),
+createNode([Port|T], Destination,Path,Nodes, ExpandedNodes) :- append(Path, [Port], NewPath),
+	append(Nodes, [[Port, NewPath, 0]], NewNodes),
 	createNode(T, Destination, Path, NewNodes, Result),
 	%write("RESULT: "),write(Result),write("\n"),
 	getFn(Result, Destination, [], ExpandedNodes).
@@ -189,13 +189,13 @@ createNode([Station|T], Destination,Path,Nodes, ExpandedNodes) :- append(Path, [
 % destination
 % f(n) = In other word = Estimated Cost of the cheapest solution thru n.
 getFn([], Destination, Nodes, Nodes).
-getFn([[Station, [FromPath|ToPath], TotalCost]|T], Destination, Nodes, Return) :-
+getFn([[Port, [FromPath|ToPath], TotalCost]|T], Destination, Nodes, Return) :-
     getGn(ToPath,FromPath, 0, Gn),
-    getHeuristicValue(Station,Destination,Hn),
+    getHeuristicValue(Port,Destination,Hn),
     Fn is Gn + Hn,
     % write("FN: ")
     %write(Fn),
-    append(Nodes, [[Station, [FromPath|ToPath], Fn]], NewNodes),
+    append(Nodes, [[Port, [FromPath|ToPath], Fn]], NewNodes),
     getFn(T, Destination, NewNodes, Return).
 
 % g(n) = get the actual cost for a path from the start node to node n.
@@ -230,10 +230,10 @@ generateDistance(X1, Y1, X2, Y2, ReturnV2) :- R is 6371e3, % metres
 					      ReturnV2 is D / 1000.
 
 % Sorting
-% setof function -> Sorting without duplicates -> Check if station,
+% setof function -> Sorting without duplicates -> Check if Port,
 % cost and total cost belongs to the queue or not
 % member function -> use to check the membership property of the element
 
-minsort(List, Return) :- setof([TotalCost,Station,Cost], member([Station,Cost,TotalCost], List), Result),
-			 findall([Cost,TotalCost,Station], member([Station,Cost,TotalCost],Result),Return).
+minsort(List, Return) :- setof([TotalCost,Port,Cost], member([Port,Cost,TotalCost], List), Result),
+			 findall([Cost,TotalCost,Port], member([Port,Cost,TotalCost],Result),Return).
 
